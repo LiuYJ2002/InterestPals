@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "977843390969",
+    "firebase_url": "https://interestpals-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "interestpals",
+    "storage_bucket": "interestpals.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977843390969:android:f170e23855a79eead7d528",
+        "android_client_info": {
+          "package_name": "com.yjkh.interestpals"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_4UcO5MGp8uGDxryZCfI-PmD9Ac7zn-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
