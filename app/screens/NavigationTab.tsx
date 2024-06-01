@@ -1,0 +1,129 @@
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Chat from './Chat';
+import HomeScreen from './HomeScreen';
+import Search from './Search';
+import Post from './Post';
+import Settings from './Settings';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+const Tab = createBottomTabNavigator();
+import { Entypo } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+
+const CustomButton = ({children, onPress}) => (
+  <TouchableOpacity
+    className="relative -top-7 flex justify-center items-center"
+    onPress={onPress}
+  >
+    <View
+      style ={{
+        width: 70,
+        height: 70,
+        borderRadius: 35,
+        
+      }}
+    >
+      {children}
+    </View>
+  </TouchableOpacity>
+);
+
+const NavigationTab = () => {
+  return (
+    
+    <Tab.Navigator
+      initialRouteName='Home'
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: 30,
+          left: 20,
+          right: 20,
+          elevation: 1,
+          backgroundColor: '#ffffff',
+          borderRadius: 15,
+          height: 90,
+          
+        },
+        tabBarBackground: () => (
+          <BlurView tint="light" intensity={10} style={StyleSheet.absoluteFill} />
+        )
+        
+      }}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} options={{
+        tabBarIcon:({focused}) => (
+          <View className="flex items-center justify-center">
+            <Entypo name="home" size={30} color={focused ? '#16247d' : '#748c94'} />
+            <Text
+              style={{color: focused ? '#16247d' : '#748c94', fontSize: 14}}
+            >
+                HOME</Text>
+          </View>
+        )
+      }}
+      />
+      <Tab.Screen name="Search" component={Search} 
+        options={{
+          tabBarIcon:({focused}) => (
+            <View className="flex items-center justify-center">
+              <AntDesign name="search1" size={30} color={focused ? '#16247d' : '#748c94'} />
+              <Text
+                style={{color: focused ? '#16247d' : '#748c94', fontSize: 14}}
+              >
+                  SEARCH</Text>
+            </View>
+          )
+        }}
+      />
+      <Tab.Screen name="Post" component={Post} 
+        options={{
+          tabBarIcon:({focused}) => (
+            <View className="flex items-center justify-center">
+              <AntDesign name="pluscircle" size={70} color={focused ? '#16247d' : '#748c94'} />
+            </View>
+          ),
+          tabBarButton: (props) => (
+            <CustomButton {...props} />
+          )
+        }}
+      />
+      <Tab.Screen name="Chat" component={Chat} 
+        options={{
+          tabBarIcon:({focused}) => (
+            <View className="flex items-center justify-center">
+              <Entypo name="chat" size={30} color={focused ? '#16247d' : '#748c94'} />
+              <Text
+                style={{color: focused ? '#16247d' : '#748c94', fontSize: 14}}
+              >
+                  CHAT</Text>
+            </View>
+          )
+        }}
+      />
+      
+      <Tab.Screen name="Settings" component={Settings} 
+        options={{
+          tabBarIcon:({focused}) => (
+            <View className="flex items-center justify-center">
+              <Ionicons name="settings" size={30} color={focused ? '#16247d' : '#748c94'} />
+              <Text
+                style={{color: focused ? '#16247d' : '#748c94', fontSize: 14}}
+              >
+                  SETTINGS</Text>
+            </View>
+          )
+        }}
+      />
+    </Tab.Navigator>
+    
+  );
+};
+
+
+
+
+export default NavigationTab;

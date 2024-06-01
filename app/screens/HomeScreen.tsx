@@ -3,6 +3,9 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { FIREBASE_AUTH } from '@/firebaseConfig';
 
+
+import Profile from './Search';
+
 const HomeScreen = () => {
   const navigation = useNavigation()
   const auth = FIREBASE_AUTH;
@@ -16,6 +19,7 @@ const HomeScreen = () => {
   }
 
   return (
+    
     <View style={styles.container}>
       <Text>Email: {auth.currentUser?.email}</Text>
       <TouchableOpacity
@@ -24,7 +28,9 @@ const HomeScreen = () => {
       >
         <Text style={styles.buttonText}>Sign out</Text>
       </TouchableOpacity>
+      
     </View>
+    
   )
 }
 
