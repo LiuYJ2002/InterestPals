@@ -4,7 +4,7 @@ import { Text, View, Button } from 'react-native'
 const Search = () => {
     return (
       <View>
-        <Text> Profile </Text>
+        <Text> Search </Text>
         <Button
             title = "click"
             onPress={() => alert('clicked')}

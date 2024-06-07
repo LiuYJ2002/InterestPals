@@ -5,12 +5,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import NavigationTab from './screens/NavigationTab';
-
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <NavigationContainer independent={true}>
       
       <Stack.Navigator>
@@ -20,6 +21,7 @@ export default function App() {
       </Stack.Navigator>
       
     </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 

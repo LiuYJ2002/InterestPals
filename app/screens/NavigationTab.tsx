@@ -3,14 +3,20 @@ import Chat from './Chat';
 import HomeScreen from './HomeScreen';
 import Search from './Search';
 import Post from './Post';
-import Settings from './Settings';
+import Profile from './Profile';
+import EditProfile from './EditProfile';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-const Tab = createBottomTabNavigator();
 import { Entypo } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
+
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 const CustomButton = ({children, onPress}) => (
   <TouchableOpacity
     className="relative -top-7 flex justify-center items-center"
@@ -105,7 +111,7 @@ const NavigationTab = () => {
         }}
       />
       
-      <Tab.Screen name="Settings" component={Settings} 
+      <Tab.Screen name="Profile" component={ProfileStacknav} 
         options={{
           tabBarIcon:({focused}) => (
             <View className="flex items-center justify-center">
@@ -113,17 +119,45 @@ const NavigationTab = () => {
               <Text
                 style={{color: focused ? '#16247d' : '#748c94', fontSize: 14}}
               >
-                  SETTINGS</Text>
+                  PROFILE</Text>
             </View>
           )
         }}
       />
-    </Tab.Navigator>
+      </Tab.Navigator>
     
+  );
+};
+export default NavigationTab;
+
+const ProfileStacknav = ({navigation}) => {
+  return(
+    <Stack.Navigator
+    >
+      <Stack.Screen
+        name = "Profile"
+        component={Profile}
+        options={{
+          title: '',
+          headerRight: () => (
+            <View style={{marginRight: 10}}>
+              <MaterialCommunityIcons.Button
+                name="account-edit"
+                onPress={() => navigation.navigate('EditProfile')}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name = "EditProfile"
+        component={EditProfile}
+        
+      />
+    </Stack.Navigator>
   );
 };
 
 
 
 
-export default NavigationTab;
