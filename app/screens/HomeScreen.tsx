@@ -2,8 +2,10 @@ import { useNavigation } from '@react-navigation/core'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { FIREBASE_AUTH } from '@/firebaseConfig';
-
-
+import { FIREBASE_DB } from '@/firebaseConfig';
+import {collection, Timestamp, setDoc, doc, getDoc, updateDoc} from "firebase/firestore"
+import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
+import { FIREBASE_STORAGE } from '@/firebaseConfig';
 import Profile from './Search';
 
 const HomeScreen = () => {

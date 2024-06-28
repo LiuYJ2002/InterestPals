@@ -2,11 +2,15 @@ import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { createUserWithEmailAndPassword,signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import {collection, Timestamp, setDoc, doc} from "firebase/firestore"
 import { FIREBASE_AUTH } from '@/firebaseConfig';
+import { FIREBASE_DB } from '@/firebaseConfig';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  
+  
   const navigation = useNavigation()
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -17,12 +21,31 @@ const LoginScreen = () => {
 
     return unsubscribe
   }, [])
+  
   const auth = FIREBASE_AUTH;
+  const firestore = FIREBASE_DB;
   const handleSignUp = () => {
       createUserWithEmailAndPassword(auth, email, password)
       .then(userCredentials => {
         const user = userCredentials.user;
+        
         console.log('Registered user:', user.email);
+        
+        setDoc(doc(firestore, "users", user.uid), {
+                  name: 'USER',
+                  phone: '',
+                  age: '',
+                  gender: '',
+                  location: '',
+                  interest: '',
+                  availability: '',
+                  email: email,
+                  createdAt: Timestamp.fromDate(new Date()),
+                  userImg: null,
+        })    
+        .catch(error => {
+          console.log('Something went wrong with added user to firestore: ', error);
+        })
       })
       .catch(error => alert(error.message))
   }

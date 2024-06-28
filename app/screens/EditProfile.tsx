@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,15 +6,114 @@ import {
   ImageBackground,
   TextInput,
   StyleSheet,
+  Alert
 } from 'react-native';
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop, BottomSheetBackdropProps, } from '@gorhom/bottom-sheet';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { FIREBASE_AUTH } from '@/firebaseConfig';
+import { FIREBASE_DB } from '@/firebaseConfig';
+import {collection, Timestamp, setDoc, doc, getDoc, updateDoc} from "firebase/firestore"
+import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
+import { FIREBASE_STORAGE } from '@/firebaseConfig';
+
 
 
 const EditProfile = () => {
   const [image, setImage] = useState('@/assets/images/react-logo.png');
+  const [userData, setUserData] = useState(null);
+  const user = FIREBASE_AUTH.currentUser;
+  
+  const getUser = async() => {
+    //console.log("hi");
+    const docRef = doc(FIREBASE_DB, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+  
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+      setUserData(docSnap.data());
+    } else {
+      
+      console.log("No such document!");
+    }
+  }
+  const storageref = ref(FIREBASE_STORAGE);
+  
+  const uploadImage =  async() => {
+    if( image == null ) {
+      return null;
+    }
+    const uploadUri = image;
+    
+
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    // Add timestamp to File Name
+    const extension = filename.split('.').pop(); 
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+
+    
+
+    const fileRef = ref(FIREBASE_STORAGE, `photos/${filename}`);
+    //const task = storageRef.putFile(uploadUri);
+    try{
+      await uploadBytes(fileRef, File).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });
+      const img = await getDownloadURL(fileRef)
+      .then((url) => {
+        // Or inserted into an <img> element
+        
+        console.log("hiiiiiiiiiii")
+        setImage(null);
+        return url;
+        
+      })
+      .catch((error) => {
+        return null;
+      });
+      console.log(img)
+      return img;
+    } catch (e) {
+      return null;
+    }
+    
+  };
+
+  useEffect(() => {
+
+    getUser();
+  }, []);
+  const handleChange = async() => {
+   
+    let imgUrl = await uploadImage();
+
+    if( imgUrl == null && userData.userImg ) {
+      imgUrl = userData.userImg;
+    }
+
+
+    const Ref = doc(FIREBASE_DB, "users", user.uid);
+    updateDoc(Ref, {
+      name: userData.name,
+      phone: userData.phone,
+      age: userData.age,
+      gender: userData.gender,
+      location: userData.location,
+      interest: userData.interest,
+      availability: userData.availability,
+      userImg: imgUrl,
+    })
+      .then(() => {
+        console.log('User Updated!');
+        Alert.alert(
+          'Profile Updated!',
+          'Your profile has been updated successfully.'
+        );
+      })
+  }
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [isOpen, setIsOpen] = useState(true);
   const handleSnap = useCallback((index) => {
@@ -50,6 +149,7 @@ const EditProfile = () => {
       if (!response.cancelled && !response.errorCode) {
           
           setImage( response.assets[0].uri); 
+          console.log(response.assets[0].uri); 
       } else {
           console.log(response); 
       }
@@ -74,6 +174,8 @@ const EditProfile = () => {
       }
   });
   }
+
+  
 
   const RenderContent = () => (
     <View className='p-5 pt-5 opacity-100'>
@@ -123,7 +225,7 @@ const EditProfile = () => {
               </View>
               </TouchableOpacity>
             <Text className="mt-6 text-2xl font-bold">
-              John Doe
+              {userData ? userData.name : ''}
             </Text>
           </View>
 
@@ -136,6 +238,8 @@ const EditProfile = () => {
                 placeholderTextColor="#666666"
                 autoCorrect={false}
                 className='flex-1 pl-2 text-gray-800'
+                value={userData ? userData.name : ''}
+                onChangeText={(txt) => setUserData({...userData, name: txt})}
               />
             </View>
             <View className='flex flex-row mt-2 mb-2 border-b border-gray-200 pb-1.5'>
@@ -145,6 +249,8 @@ const EditProfile = () => {
                 placeholderTextColor="#666666"
                 autoCorrect={false}
                 className='flex-1 pl-2 text-gray-800'
+                value={userData ? userData.email : ''}
+                onChangeText={(txt) => setUserData({...userData, email: txt})}
               />
             </View>
             <View className='flex flex-row mt-2 mb-2 border-b border-gray-200 pb-1.5'>
@@ -154,6 +260,8 @@ const EditProfile = () => {
                 placeholderTextColor="#666666"
                 autoCorrect={false}
                 className='flex-1 pl-2 text-gray-800'
+                value={userData ? userData.phone : ''}
+                onChangeText={(txt) => setUserData({...userData, phone: txt})}
               />
             </View>
             <View className='flex flex-row mt-2 mb-2 border-b border-gray-200 pb-1.5'>
@@ -163,6 +271,8 @@ const EditProfile = () => {
                 placeholderTextColor="#666666"
                 autoCorrect={false}
                 className='flex-1 pl-2 text-gray-800'
+                value={userData ? userData.age : ''}
+                onChangeText={(txt) => setUserData({...userData, age: txt})}
               />
             </View>
             <View className='flex flex-row mt-2 mb-2 border-b border-gray-200 pb-1.5'>
@@ -172,6 +282,8 @@ const EditProfile = () => {
                 placeholderTextColor="#666666"
                 autoCorrect={false}
                 className='flex-1 pl-2 text-gray-800'
+                value={userData ? userData.gender : ''}
+                onChangeText={(txt) => setUserData({...userData, gender: txt})}
               />
             </View>
             <View className='flex flex-row mt-2 mb-2 border-b border-gray-200 pb-1.5'>
@@ -181,6 +293,8 @@ const EditProfile = () => {
                 placeholderTextColor="#666666"
                 autoCorrect={false}
                 className='flex-1 pl-2 text-gray-800'
+                value={userData ? userData.location : ''}
+              onChangeText={(txt) => setUserData({...userData, location: txt})}
               />
             </View>
             <View className='flex flex-row mt-2 mb-2 border-b border-gray-200 pb-1.5'>
@@ -190,6 +304,8 @@ const EditProfile = () => {
                 placeholderTextColor="#666666"
                 autoCorrect={false}
                 className='flex-1 pl-2 text-gray-800'
+                value={userData ? userData.interest : ''}
+                onChangeText={(txt) => setUserData({...userData, interest: txt})}
               />
             </View>
             <View className='flex flex-row mt-2 mb-2 border-b border-gray-200 pb-1.5'>
@@ -199,10 +315,12 @@ const EditProfile = () => {
                 placeholderTextColor="#666666"
                 autoCorrect={false}
                 className='flex-1 pl-2 text-gray-800'
+                value={userData ? userData.availability : ''}
+                onChangeText={(txt) => setUserData({...userData, availability: txt})}
               />
             </View>
           </View>
-          <TouchableOpacity className='px-6 py-4 rounded-lg bg-rose-600 text-white font-bold items-center' onPress={() => {}}>
+          <TouchableOpacity className='px-6 py-4 rounded-lg bg-rose-600 text-white font-bold items-center' onPress={handleChange}>
             <Text className='text-lg font-bold text-white'>Submit</Text>
           </TouchableOpacity>
         </View>
