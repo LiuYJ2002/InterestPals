@@ -17,7 +17,7 @@ const MyComponent = ({item, handleDelete}) => {
     return(    
     <View className='mt-10'>
         <Card className='mt-5'>
-            <Card.Title title='lol' subtitle={moment(item.createdAt.toDate()).fromNow()} left={LeftContent} />
+            <Card.Title title='User' subtitle={moment(item.createdAt.toDate()).fromNow()} left={LeftContent} />
             <Card.Content>
                 <Text variant="bodyMedium">'Activity:' {item.Interest}</Text>
                 <Text variant="bodyMedium">'Address:' {item.Location}</Text>
