@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "InterestPals",
-    "slug": "InterestPals",
+    "slug": "interest-pals",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -22,7 +22,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.yjkh.interestpals"
+      "package": "com.yjkh.interestpals",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -50,6 +53,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": " fcfda4ef-cb4d-45d5-a71a-095bc55234ae"
+      }
+    },
+    "owner": "liuyujia"
   }
 }

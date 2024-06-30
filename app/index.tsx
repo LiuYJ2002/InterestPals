@@ -7,6 +7,7 @@ import HomeScreen from './screens/HomeScreen';
 import NavigationTab from './screens/NavigationTab';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
