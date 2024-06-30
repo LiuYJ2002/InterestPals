@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -164,14 +164,15 @@ const DropdownComponent = () => {
   const [Location, setLocation] = useState(null);
   const [skill, setSkill] = useState(null);
   const [Address, setAddress] = useState('')
-
+  const [Comments, setComments] = useState('')
+  
   const user = FIREBASE_AUTH.currentUser;
-
+ 
   const submitPost = async () => {
     
 //note this doesnt make new posts
       addDoc(collection(FIREBASE_DB, "posts"), {
-        Intrest : Interest,
+        Interest : Interest,
         Time : Time,
         Duration : Duration,
         Day : Day,
@@ -182,6 +183,7 @@ const DropdownComponent = () => {
         Address : Address,
         userid : user.uid,
         likes : null,
+        Comments : Comments,
         createdAt: Timestamp.fromDate(new Date()),
         
       })
@@ -212,8 +214,9 @@ const DropdownComponent = () => {
   };
 
   return (
-    <View>
-      <KeyboardAvoidingView>
+    
+      <KeyboardAvoidingView 
+      behavior="padding">
         <Dropdown
           style={styles.dropdown}
           placeholderStyle={styles.placeholderStyle}
@@ -390,13 +393,13 @@ const DropdownComponent = () => {
           )}
           renderItem={renderItem}
         />
-      </KeyboardAvoidingView>
+      
         <TextInput
           multiline
           numberOfLines={4} 
           className='w-full h-20 p-4 border border-gray-300 rounded-lg bg-white mb-2'
-          placeholder="Address..."
-          onChangeText={text => setAddress(text)}
+          placeholder="Additional comments..."
+          onChangeText={text => setComments(text)}
         />
         <TouchableOpacity
             onPress={submitPost}
@@ -404,8 +407,7 @@ const DropdownComponent = () => {
           >
             <Text className='text-white font-bold text base'>Post</Text>
           </TouchableOpacity>
-        
-    </View>
+          </KeyboardAvoidingView>
     
   );
 };

@@ -80,7 +80,7 @@ const NavigationTab = () => {
               <Text
                 style={{color: focused ? '#16247d' : '#748c94', fontSize: 14}}
               >
-                  SEARCH</Text>
+                  EXPLORE</Text>
             </View>
           )
         }}

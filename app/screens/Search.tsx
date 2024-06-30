@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import { Text, View, Button, FlatList, StyleSheet, Image } from 'react-native'
+import { Text, View, Button, FlatList, StyleSheet, Image, Alert } from 'react-native'
 import { FIREBASE_AUTH } from '@/firebaseConfig';
 import { FIREBASE_DB } from '@/firebaseConfig';
-import {collection, Timestamp, setDoc, doc, getDoc, updateDoc, query, getDocs, orderBy} from "firebase/firestore"
+import {collection, Timestamp, setDoc, doc, getDoc, updateDoc, query, getDocs, orderBy, deleteDoc} from "firebase/firestore"
 import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
 import { FIREBASE_STORAGE } from '@/firebaseConfig';
 import { Ionicons } from "@expo/vector-icons";
@@ -13,6 +13,7 @@ const Search = () => {
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [deleted, setDeleted] = useState(false);
   const getUser = async() => {
     //console.log("hi");
     const docRef = doc(FIREBASE_DB, "users", user.uid);
@@ -28,7 +29,28 @@ const Search = () => {
   }
 
 
-
+  const handleDelete = async(postId) => {
+    Alert.alert(
+      'Delete post',
+      'Action is irreversible',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed!'),
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: async() => {
+            await deleteDoc(doc(FIREBASE_DB, "posts", postId));
+            Alert.alert('Deleted')
+            setDeleted(true)},
+        },
+      ],
+      {cancelable: false},
+    );
+    
+  }
   const getData = async () => {
     try {
       const list = [];
@@ -51,6 +73,7 @@ const Search = () => {
           createdAt
         } = doc.data();
         list.push({
+          id : doc.id,
           Address : Address,
           Age : Age,
           Day : Day,
@@ -82,46 +105,25 @@ const Search = () => {
     getData();
     
   }, []);
+  useEffect(() => {
+    getData();
+    setDeleted(false);
+  }, [deleted]);
   
   const ListHeader = () => {
     return null;
   };
-
-  /*const renderPost = (post) => {
-    
-        <View style={styles.feedItem}>
-            
-            <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <View>
-                        <Text style={styles.name}>{post.Address}</Text>
-                        
-                    </View>
-
-                    
-                </View>
-                <Text style={styles.post}>{post.text}</Text>
-                <Image source={post.image} style={styles.postImage} resizeMode="cover" />
-                <View style={{ flexDirection: "row" }}>
-                    
-                    
-                </View>
-            </View>
-        </View>
-    ;
-  };*/
   
       return (
           <View style={styles.container}>
               <View style={styles.header}>
-                  <Text style={styles.headerTitle}>Feed</Text>
+                  <Text style={styles.headerTitle}>Explore</Text>
               </View>
 
               <FlatList
                   style={styles.feed}
                   data={posts}
-                  //renderItem={({ item }) => renderPost(item)}
-                  renderItem={({ item }) => <MyComponent className="mt-10" item = {item} userData = {userData}></MyComponent>}
+                  renderItem={({ item }) => <MyComponent className="mt-10" item = {item} handleDelete = {handleDelete}></MyComponent>}
                   keyExtractor={item => item.id}
                   showsVerticalScrollIndicator={false}
                   ListHeaderComponent={ListHeader}
