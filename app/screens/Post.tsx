@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, ScrollView, Platform, SafeAreaView } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { FIREBASE_AUTH } from '@/firebaseConfig';
@@ -216,7 +216,9 @@ const DropdownComponent = () => {
   return (
     
       <KeyboardAvoidingView 
-      behavior="padding">
+      
+      >
+      <SafeAreaView className='mb-10'>
         <Dropdown
           style={styles.dropdown}
           placeholderStyle={styles.placeholderStyle}
@@ -403,12 +405,13 @@ const DropdownComponent = () => {
         />
         <TouchableOpacity
             onPress={submitPost}
-            className='bg-blue-600  p-4 rounded-lg items-center '
+            className='bg-blue-600  p-4 rounded-lg items-center'
           >
             <Text className='text-white font-bold text base'>Post</Text>
           </TouchableOpacity>
-          </KeyboardAvoidingView>
-    
+          </SafeAreaView>
+        </KeyboardAvoidingView>
+        
   );
 };
 

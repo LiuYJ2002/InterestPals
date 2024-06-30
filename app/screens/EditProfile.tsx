@@ -6,7 +6,8 @@ import {
   ImageBackground,
   TextInput,
   StyleSheet,
-  Alert
+  Alert,
+  KeyboardAvoidingView
 } from 'react-native';
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop, BottomSheetBackdropProps, } from '@gorhom/bottom-sheet';
 
@@ -193,7 +194,9 @@ const EditProfile = () => {
     </View>
   );
   return (
-    
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    >
     <View className='flex-1'>
       
         
@@ -340,7 +343,7 @@ const EditProfile = () => {
         
     </View>
     
-    
+    </KeyboardAvoidingView>
    );
 };
 
