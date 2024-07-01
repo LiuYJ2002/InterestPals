@@ -6,11 +6,14 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import NavigationTab from './screens/NavigationTab';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
+import { NativeWindStyleSheet } from "nativewind";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  NativeWindStyleSheet.setOutput({
+    default: "native",
+  });
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
     <NavigationContainer independent={true}>
