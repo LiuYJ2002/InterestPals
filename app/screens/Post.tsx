@@ -4,10 +4,11 @@ import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { FIREBASE_AUTH } from '@/firebaseConfig';
 import { FIREBASE_DB } from '@/firebaseConfig';
-import {collection, Timestamp, setDoc, doc, getDoc, updateDoc, addDoc} from "firebase/firestore"
+import {collection, Timestamp, setDoc, doc, getDoc, updateDoc, addDoc, arrayUnion, arrayRemove, DocumentReference} from "firebase/firestore"
 import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
 import { FIREBASE_STORAGE } from '@/firebaseConfig';
-
+import Loading from '../component/Loading';
+import { useFocusEffect } from '@react-navigation/native';
 const Interestdata = [
   { label: 'Basketball', value: 'Basketball' },
   { label: 'Swimming', value: 'Swimming' },
@@ -165,13 +166,33 @@ const DropdownComponent = () => {
   const [skill, setSkill] = useState(null);
   const [Address, setAddress] = useState('')
   const [Comments, setComments] = useState('')
-  
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const user = FIREBASE_AUTH.currentUser;
- 
-  const submitPost = async () => {
+  const getUser = async() => {
+    //console.log("hi");
+    const docRef = doc(FIREBASE_DB, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+      setUserData(docSnap.data());
+      if (loading) {
+        setLoading(false);
+      }
+    } else {
+      
+      console.log("No such document!");
+      if (loading) {
+        setLoading(false);
+      }
+    }
     
-//note this doesnt make new posts
-      addDoc(collection(FIREBASE_DB, "posts"), {
+  }
+  const submitPost = async () => {
+      let ref = null;
+      //add post details to database
+       await addDoc(collection(FIREBASE_DB, "posts"), {
         Interest : Interest,
         Time : Time,
         Duration : Duration,
@@ -181,13 +202,17 @@ const DropdownComponent = () => {
         Location : Location,
         skill : skill,
         Address : Address,
-        userid : user.uid,
-        likes : null,
+        users : [user.uid],
+        userid: user.uid,
+        messages: [],
+        lastMessage: null,
         Comments : Comments,
+        name: userData.name,
+        image: userData.userImg,
         createdAt: Timestamp.fromDate(new Date()),
         
       })
-      .then(() => {Alert.alert('Posted!')
+      .then((docRef) => {Alert.alert('Posted!')
         setInterest(null);
         setDay(null);
         setTime(null);
@@ -197,13 +222,26 @@ const DropdownComponent = () => {
         setLocation(null);
         setSkill(null);
         setAddress('');
+        ref = docRef.id
+        const userRef = doc(FIREBASE_DB, "users", user.uid)
+        updateDoc(userRef, {
+        chats : arrayUnion(ref)
+        });
+
       })    
       .catch(error => {
       console.log('Something went wrong with added user to firestore: ', error);
       })
 
+      //update users data with new chatroom
+      
     
   }
+  
+  useEffect(() => {
+    getUser();
+    
+  }, []);
   const renderItem = item => {
     return (
       <View style={styles.item}>
@@ -212,7 +250,9 @@ const DropdownComponent = () => {
       </View>
     );
   };
-
+  if (loading) {
+    return <Loading />;
+  }
   return (
     
       <KeyboardAvoidingView 

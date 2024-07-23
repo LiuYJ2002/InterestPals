@@ -18,7 +18,7 @@ import { FIREBASE_DB } from '@/firebaseConfig';
 import {collection, Timestamp, setDoc, doc, getDoc, updateDoc} from "firebase/firestore"
 import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
 import { FIREBASE_STORAGE } from '@/firebaseConfig';
-
+import Loading from '../component/Loading';
 
 
 const EditProfile = () => {
@@ -34,11 +34,15 @@ const EditProfile = () => {
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
       setUserData(docSnap.data());
+      
     } else {
       
       console.log("No such document!");
+      
     }
   }
+
+  
   const storageref = ref(FIREBASE_STORAGE);
   
   const uploadImage =  async() => {
@@ -60,22 +64,36 @@ const EditProfile = () => {
     const fileRef = ref(FIREBASE_STORAGE, `photos/${filename}`);
     //const task = storageRef.putFile(uploadUri);
     try{
-      await uploadBytes(fileRef, File).then((snapshot) => {
-        console.log('Uploaded a blob or file!');
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", image, true);
+        xhr.send(null);
       });
+      /*await uploadBytes(fileRef, File).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });*/
+      const result = await uploadBytes(fileRef, blob);
+      blob.close();
       const img = await getDownloadURL(fileRef)
+      
       .then((url) => {
-        // Or inserted into an <img> element
-        
-        console.log("hiiiiiiiiiii")
         setImage(null);
+        console.log("new imgaaaa", url)
         return url;
         
       })
       .catch((error) => {
         return null;
       });
-      console.log(img)
+      
       return img;
     } catch (e) {
       return null;
@@ -90,7 +108,7 @@ const EditProfile = () => {
   const handleChange = async() => {
    
     let imgUrl = await uploadImage();
-
+    
     if( imgUrl == null && userData.userImg ) {
       imgUrl = userData.userImg;
     }

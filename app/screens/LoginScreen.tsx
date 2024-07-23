@@ -42,6 +42,8 @@ const LoginScreen = () => {
                   email: email,
                   createdAt: Timestamp.fromDate(new Date()),
                   userImg: null,
+                  chats: [],
+                  id: user.uid
         })    
         .catch(error => {
           console.log('Something went wrong with added user to firestore: ', error);

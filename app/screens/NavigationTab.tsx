@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Chat from './Chat';
+import Message from './Message';
 import HomeScreen from './HomeScreen';
 import Search from './Search';
 import Post from './Post';
@@ -12,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 
 const Tab = createBottomTabNavigator();
@@ -36,16 +37,24 @@ const CustomButton = ({children, onPress}) => (
 );
 
 const NavigationTab = () => {
+  const getTabBarVisibility = (route) => {
+    console.log(getFocusedRouteNameFromRoute(route))
+    if (getFocusedRouteNameFromRoute(route) === 'Message') {
+      return false;
+    }
+    return true;
+  };
   return (
     
     <Tab.Navigator
-      initialRouteName='Home'
+      initialRouteName='Profile'
+      
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
           position: 'absolute',
-          bottom: 30,
+          bottom: 10,
           left: 20,
           right: 20,
           elevation: 1,
@@ -97,8 +106,10 @@ const NavigationTab = () => {
           )
         }}
       />
-      <Tab.Screen name="Chat" component={Chat} 
-        options={{
+      <Tab.Screen name="Chat" component={ChatStacknav} 
+        options={({route}) => ({
+          
+          tabBarStyle: { display:  getTabBarVisibility(route)? 'absolute' : 'none'},
           tabBarIcon:({focused}) => (
             <View className="flex items-center justify-center">
               <Entypo name="chat" size={30} color={focused ? '#16247d' : '#748c94'} />
@@ -108,7 +119,7 @@ const NavigationTab = () => {
                   CHAT</Text>
             </View>
           )
-        }}
+        })}
       />
       
       <Tab.Screen name="Profile" component={ProfileStacknav} 
@@ -155,6 +166,15 @@ const ProfileStacknav = ({navigation}) => {
         
       />
     </Stack.Navigator>
+  );
+};
+
+const ChatStacknav = ({navigation}) => {
+  return(
+    <Stack.Navigator>
+      <Stack.Screen name="Chat" component={Chat} />
+    <Stack.Screen name="Message" component={Message}/>
+  </Stack.Navigator>
   );
 };
 

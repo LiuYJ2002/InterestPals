@@ -12,7 +12,7 @@ import { FIREBASE_DB } from '@/firebaseConfig';
 import {collection, Timestamp, setDoc, doc, getDoc, updateDoc} from "firebase/firestore"
 import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
 import { FIREBASE_STORAGE } from '@/firebaseConfig';
-
+import Loading from '../component/Loading';
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -36,16 +36,26 @@ const Profile = () => {
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
       setUserData(docSnap.data());
+      if (loading) {
+        setLoading(false);
+      }
     } else {
       
       console.log("No such document!");
+      if (loading) {
+        setLoading(false);
+      }
     }
+    
   }
   
   useEffect(() => {
     getUser();
-    navigation.addListener("focus", () => setLoading(!loading));
+    navigation.addListener("focus", () => setLoading(loading?loading:!loading));
   }, [navigation, loading]);
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <SafeAreaView className='flex-1'>
       <View className='px-7 mb-4' 
