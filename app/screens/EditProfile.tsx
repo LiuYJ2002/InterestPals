@@ -15,11 +15,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { FIREBASE_AUTH } from '@/firebaseConfig';
 import { FIREBASE_DB } from '@/firebaseConfig';
-import {collection, Timestamp, setDoc, doc, getDoc, updateDoc} from "firebase/firestore"
+import {doc, getDoc, updateDoc} from "firebase/firestore"
 import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
 import { FIREBASE_STORAGE } from '@/firebaseConfig';
-import Loading from '../component/Loading';
-
 
 const EditProfile = () => {
   const [image, setImage] = useState('@/assets/images/react-logo.png');
@@ -27,22 +25,17 @@ const EditProfile = () => {
   const user = FIREBASE_AUTH.currentUser;
   
   const getUser = async() => {
-    //console.log("hi");
     const docRef = doc(FIREBASE_DB, "users", user.uid);
     const docSnap = await getDoc(docRef);
   
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
       setUserData(docSnap.data());
-      
     } else {
-      
       console.log("No such document!");
-      
     }
   }
 
-  
   const storageref = ref(FIREBASE_STORAGE);
   
   const uploadImage =  async() => {
@@ -50,19 +43,12 @@ const EditProfile = () => {
       return null;
     }
     const uploadUri = image;
-    
-
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-
     // Add timestamp to File Name
     const extension = filename.split('.').pop(); 
     const name = filename.split('.').slice(0, -1).join('.');
     filename = name + Date.now() + '.' + extension;
-
-    
-
     const fileRef = ref(FIREBASE_STORAGE, `photos/${filename}`);
-    //const task = storageRef.putFile(uploadUri);
     try{
       const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -77,13 +63,9 @@ const EditProfile = () => {
         xhr.open("GET", image, true);
         xhr.send(null);
       });
-      /*await uploadBytes(fileRef, File).then((snapshot) => {
-        console.log('Uploaded a blob or file!');
-      });*/
       const result = await uploadBytes(fileRef, blob);
       blob.close();
       const img = await getDownloadURL(fileRef)
-      
       .then((url) => {
         setImage(null);
         console.log("new imgaaaa", url)
@@ -102,9 +84,9 @@ const EditProfile = () => {
   };
 
   useEffect(() => {
-
     getUser();
   }, []);
+
   const handleChange = async() => {
    
     let imgUrl = await uploadImage();
@@ -112,7 +94,6 @@ const EditProfile = () => {
     if( imgUrl == null && userData.userImg ) {
       imgUrl = userData.userImg;
     }
-
 
     const Ref = doc(FIREBASE_DB, "users", user.uid);
     updateDoc(Ref, {
@@ -194,8 +175,6 @@ const EditProfile = () => {
   });
   }
 
-  
-
   const RenderContent = () => (
     <View className='p-5 pt-5 opacity-100'>
       <View className='items-center'>
@@ -216,11 +195,6 @@ const EditProfile = () => {
     style={{ flex: 1 }}
     >
     <View className='flex-1'>
-      
-        
-      
-      
-      
         <View style={{margin: 20,
       }}>
           <View className='items-center'>

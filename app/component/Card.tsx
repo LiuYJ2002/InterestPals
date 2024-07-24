@@ -3,13 +3,10 @@ import {View, Image, Alert} from 'react-native'
 import { Avatar, Button, Card, Text } from 'react-native-paper';
 import { FIREBASE_AUTH } from '@/firebaseConfig';
 import { FIREBASE_DB } from '@/firebaseConfig';
-import {collection, Timestamp, setDoc, doc, getDoc, updateDoc, deleteDoc, arrayUnion} from "firebase/firestore"
-import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
-import { FIREBASE_STORAGE } from '@/firebaseConfig';
+import { doc, updateDoc, arrayUnion} from "firebase/firestore"
 import moment from 'moment';
 
 const MyComponent = ({item, handleDelete, userData}) => {
-    //console.log("userrrrrrrrrrrrrrrrsssb", userData)
     const user = FIREBASE_AUTH.currentUser;
     
     const LeftContent = () =>  <Avatar.Image  size={50} source={{uri: item.image}} />

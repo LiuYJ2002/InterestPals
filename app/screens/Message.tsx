@@ -1,22 +1,18 @@
-import React, { useState, useCallback, useEffect, useContext, useLayoutEffect } from 'react'
+import React, { useState, useCallback, useEffect} from 'react'
 import { GiftedChat } from 'react-native-gifted-chat'
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, View} from 'react-native';
 import { FIREBASE_AUTH } from '@/firebaseConfig';
 import { FIREBASE_DB } from '@/firebaseConfig';
-import {collection, Timestamp, setDoc, doc, getDoc, updateDoc, addDoc, query, documentId, where, getDocs, orderBy, onSnapshot} from "firebase/firestore"
-import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
-import { FIREBASE_STORAGE } from '@/firebaseConfig';
-import Loading from '../component/Loading';
+import {collection, doc, updateDoc, addDoc, query, orderBy, onSnapshot} from "firebase/firestore"
+
 const Message = ({route}) => {
-  //const [userData, setUserData] = useState(null);
+
   const [messages, setMessages] = useState([])
   const user = FIREBASE_AUTH.currentUser;
   const  {item, userData}  = route.params;
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
-    
     const data = query(collection(doc(FIREBASE_DB, "posts", item.id), "messages"), orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(data, (querySnapshot) => setMessages(
       querySnapshot.docs.map(doc =>({
@@ -29,8 +25,6 @@ const Message = ({route}) => {
     
     );
     return () => unsubscribe();
-    
-    
   }, [])
 
   const onSend = useCallback(async(messages = []) => {
@@ -46,17 +40,6 @@ const Message = ({route}) => {
     } = messages[0]
     
     const docRef = await addDoc(collection(doc(FIREBASE_DB, "posts", item.id), "messages"), {
-      /*_id : messages[0]._id,
-      createdAt: new Date().getTime(),
-      text : messages[0].text,
-      
-      user: {
-        userid: user.uid,
-        name :userData.name,
-        avatar: userData.userImg,
-        email: userData.email
-        
-      }*/
         _id,
         createdAt,
         text,
@@ -74,7 +57,7 @@ const Message = ({route}) => {
   }, []);
   function renderLoading() {
     return (
-      <View style={styles.loadingContainer}>
+      <View className='flex-1 flex items-center justify-center'>
         <ActivityIndicator size='large' color='#6646ee' />
       </View>
     );
@@ -99,11 +82,3 @@ const Message = ({route}) => {
 
 export default Message;
 
-const styles = StyleSheet.create({
-  // rest remains same
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
-});

@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, ScrollView, Platform, SafeAreaView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, SafeAreaView } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { FIREBASE_AUTH } from '@/firebaseConfig';
 import { FIREBASE_DB } from '@/firebaseConfig';
-import {collection, Timestamp, setDoc, doc, getDoc, updateDoc, addDoc, arrayUnion, arrayRemove, DocumentReference} from "firebase/firestore"
-import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
-import { FIREBASE_STORAGE } from '@/firebaseConfig';
+import {collection, Timestamp, doc, getDoc, updateDoc, addDoc, arrayUnion} from "firebase/firestore"
 import Loading from '../component/Loading';
-import { useFocusEffect } from '@react-navigation/native';
+
 const Interestdata = [
   { label: 'Basketball', value: 'Basketball' },
   { label: 'Swimming', value: 'Swimming' },
@@ -233,9 +231,6 @@ const DropdownComponent = () => {
       console.log('Something went wrong with added user to firestore: ', error);
       })
 
-      //update users data with new chatroom
-      
-    
   }
   
   useEffect(() => {

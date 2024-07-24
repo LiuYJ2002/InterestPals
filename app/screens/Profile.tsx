@@ -1,5 +1,5 @@
 import React , {useState, useEffect}from 'react';
-import {View, SafeAreaView, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, SafeAreaView, TouchableOpacity} from 'react-native';
 import {
   Avatar,
   Title,
@@ -9,9 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FIREBASE_AUTH } from '@/firebaseConfig';
 import { useNavigation } from '@react-navigation/core'
 import { FIREBASE_DB } from '@/firebaseConfig';
-import {collection, Timestamp, setDoc, doc, getDoc, updateDoc} from "firebase/firestore"
-import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
-import { FIREBASE_STORAGE } from '@/firebaseConfig';
+import { doc, getDoc} from "firebase/firestore"
 import Loading from '../component/Loading';
 
 const Profile = () => {
@@ -29,7 +27,6 @@ const Profile = () => {
       .catch(error => alert(error.message))
   }
   const getUser = async() => {
-    //console.log("hi");
     const docRef = doc(FIREBASE_DB, "users", user.uid);
     const docSnap = await getDoc(docRef);
 
@@ -53,9 +50,11 @@ const Profile = () => {
     getUser();
     navigation.addListener("focus", () => setLoading(loading?loading:!loading));
   }, [navigation, loading]);
+
   if (loading) {
     return <Loading />;
   }
+
   return (
     <SafeAreaView className='flex-1'>
       <View className='px-7 mb-4' 
@@ -118,23 +117,3 @@ const Profile = () => {
 }
 
 export default Profile
-
-const styles = StyleSheet.create({
-  
-   button: {
-    backgroundColor: '#0782F9',
-    width: '60%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 10,
-    
-    justifyContent: 'center',
-    
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-})

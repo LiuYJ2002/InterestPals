@@ -3,7 +3,6 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen';
-import HomeScreen from './screens/HomeScreen';
 import NavigationTab from './screens/NavigationTab';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NativeWindStyleSheet } from "nativewind";
